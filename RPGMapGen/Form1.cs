@@ -20,8 +20,16 @@ namespace RPGMapGen
 
         private void mapGenBtn_Click(object sender, EventArgs e)
         {
-            Stage stage = new Stage(50,50,5,"Medium");
+            int numRooms = (int)numRoomsDropDown.Value;
+            Stage stage = new Stage(50,50, numRooms,"Medium");
             MapForm mForm = new MapForm(stage);
+            //foreach(Room rm in stage.Rooms)
+            //{
+            //    listView1.Items.Add(rm.StartX.ToString());
+            //    listView1.Items.Add(rm.StartY.ToString());
+            //    listView1.Items.Add(rm.SizeX.ToString());
+            //    listView1.Items.Add(rm.SizeY.ToString());
+            //}
             mForm.Show();
         }
     }

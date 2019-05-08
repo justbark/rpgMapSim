@@ -12,6 +12,7 @@ namespace RPGMapGen
         private byte[] borders = { 0, 0, 0, 0 };
         private int x;
         private int y;
+        private bool roomCell;
 
         public bool checkWalls()
         {
@@ -30,5 +31,6 @@ namespace RPGMapGen
         public int Y { get => y; set => y = value; }
         public byte[] Walls { get => walls; set => walls = value; }
         public byte[] Borders { get => borders; set => borders = value; }
+        public bool RoomCell { get => roomCell; set => roomCell = value; }
     }
 }

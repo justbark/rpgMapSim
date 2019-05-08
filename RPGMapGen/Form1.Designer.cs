@@ -39,11 +39,11 @@
             this.label5 = new System.Windows.Forms.Label();
             this.numStairsDropDown = new System.Windows.Forms.NumericUpDown();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.mapGenBtn = new System.Windows.Forms.Button();
             this.lockedDoorsChkBx = new System.Windows.Forms.CheckBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mapGenBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numRoomsDropDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numFloorsDropDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numStairsDropDown)).BeginInit();
@@ -177,6 +177,16 @@
             this.panel1.Size = new System.Drawing.Size(172, 210);
             this.panel1.TabIndex = 10;
             // 
+            // mapGenBtn
+            // 
+            this.mapGenBtn.Location = new System.Drawing.Point(6, 158);
+            this.mapGenBtn.Name = "mapGenBtn";
+            this.mapGenBtn.Size = new System.Drawing.Size(157, 46);
+            this.mapGenBtn.TabIndex = 11;
+            this.mapGenBtn.Text = "Generate map";
+            this.mapGenBtn.UseVisualStyleBackColor = true;
+            this.mapGenBtn.Click += new System.EventHandler(this.mapGenBtn_Click);
+            // 
             // lockedDoorsChkBx
             // 
             this.lockedDoorsChkBx.AutoSize = true;
@@ -193,7 +203,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(200, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(198, 24);
             this.menuStrip1.TabIndex = 11;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -208,24 +218,14 @@
             // openMapToolStripMenuItem
             // 
             this.openMapToolStripMenuItem.Name = "openMapToolStripMenuItem";
-            this.openMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openMapToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.openMapToolStripMenuItem.Text = "Open map";
-            // 
-            // mapGenBtn
-            // 
-            this.mapGenBtn.Location = new System.Drawing.Point(6, 158);
-            this.mapGenBtn.Name = "mapGenBtn";
-            this.mapGenBtn.Size = new System.Drawing.Size(157, 46);
-            this.mapGenBtn.TabIndex = 11;
-            this.mapGenBtn.Text = "Generate map";
-            this.mapGenBtn.UseVisualStyleBackColor = true;
-            this.mapGenBtn.Click += new System.EventHandler(this.mapGenBtn_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(200, 243);
+            this.ClientSize = new System.Drawing.Size(198, 248);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;

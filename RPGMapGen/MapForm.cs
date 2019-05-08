@@ -28,7 +28,7 @@ namespace RPGMapGen
         {
             Graphics g = e.Graphics;
             Pen pen = new Pen(Color.Black);             //paint exterior of object
-            Brush brush = new SolidBrush(Color.Red);    //paint interior of object
+            SolidBrush brush = new SolidBrush(Color.Red);    //paint interior of object
 
             
             int x;
@@ -40,6 +40,10 @@ namespace RPGMapGen
                 {
                     y = j * cellSize + offsetY;
 
+                    //if(lvl.Cells[i,j].RoomCell == true)
+                    //{
+                    //    g.FillRectangle(brush, x, y, x + cellSize, y + cellSize);
+                    //}
                     if (lvl.Cells[i, j].Walls[0] == 1)
                     {
                         g.DrawLine(pen, x, y, x + cellSize, y);
@@ -57,6 +61,12 @@ namespace RPGMapGen
                         g.DrawLine(pen, x, y, x, y + cellSize);
                     }
                 }
+            }
+            //draw rooms
+            foreach (Room rm in lvl.Rooms)
+            {
+                Rectangle rect = new Rectangle((rm.StartX * cellSize) + offsetX, (rm.StartY * cellSize) + offsetY, rm.SizeX * cellSize, rm.SizeY * cellSize);
+                g.FillRectangle(brush, rect);
             }
         }
     }
