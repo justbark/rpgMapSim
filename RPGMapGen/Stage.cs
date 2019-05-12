@@ -28,6 +28,8 @@ namespace RPGMapGen
             initCells();
             genRooms(numRooms);
             genMaze();
+            genDoors();
+            removeDeadEnds();
         }
 
         private void initCells()
@@ -68,15 +70,7 @@ namespace RPGMapGen
             //function to add rooms to the stage before the maze/corridor generation
             Random rand = new Random();
             rooms = new List<Room>();
-            
 
-            //if using borders:
-            //north border = 0
-            //east border = 1
-            //south border = 2
-            //west border = 3
-
-            //try by setting the entire cell (roomCell) to true?
             int roomCount = 0;
             while(roomCount < totalRooms)
             {
@@ -85,21 +79,37 @@ namespace RPGMapGen
                 int x = rand.Next(sizeX);
                 int y = rand.Next(sizeY);
 
+                // we want rooms placed in odd numbered locations to ensure that
+                // rooms arent placed next to one another
+                //if x is even
+                if (x % 2 == 0)
+                    x++;
+                //if y is even
+                if (y % 2 == 0)
+                    y++;
+
                 if (roomSize == "Large")
                 {
-                    maxRoomSize = 12;
+                    maxRoomSize = 11;
                 }
                 else if (roomSize == "Medium")
                 {
-                    maxRoomSize = 10;
+                    maxRoomSize = 9;
                 }
                 else if (roomSize == "Small")
                 {
-                    maxRoomSize = 8;
+                    maxRoomSize = 7;
                 }
 
                 int roomSizeX = rand.Next(3, maxRoomSize);
                 int roomSizeY = rand.Next(3, maxRoomSize);
+
+                //make sure the rooms are an odd size.
+                if (roomSizeX % 2 == 0)
+                    roomSizeX++;
+                if (roomSizeY % 2 == 0)
+                    roomSizeY++;
+
                 //1.) make sure the room will fit on the map
                 if (x + roomSizeX > sizeX || y + roomSizeY > sizeY)
                     continue;
@@ -129,10 +139,15 @@ namespace RPGMapGen
                         for (int j = y; j < y + roomSizeY; j++)
                         {
                             cells[i, j].RoomCell = true;
+                            for( int k = 0; k < 4; k++)
+                            {
+                                cells[i, j].Walls[k] = 0;
+                            }
                         }
                     }
                     rooms.Add(newRoom);
                     roomCount++;
+
                 }
             }
         }
@@ -140,6 +155,8 @@ namespace RPGMapGen
         private void genMaze()
         {
             Random rand = new Random();
+
+            //start somewhere outside of a room to generate the corridor
             int x = 0;
             int y = 0;
             do
@@ -165,7 +182,7 @@ namespace RPGMapGen
                 //clear the list because we are at a different point
                 neighbors.Clear();
 
-                //look south of current for a neighbor
+                //look north of current for a neighbor
                 tempVert = new Vert();
                 if (y - 1 >= 0 && cells[x, y - 1].checkWalls() == true && !cells[x, y - 1].RoomCell)
                 {
@@ -252,6 +269,113 @@ namespace RPGMapGen
                     }
 
                 }
+            }
+        }
+
+        private void genDoors()
+        {
+            Random rand = new Random();
+            List<Tuple<int, int>> potentialDoorCell = new List<Tuple<int,int>>();
+            foreach (Room rm in rooms)
+            {
+                potentialDoorCell.Clear();
+                //pick a cell along the wall of the room and set make it a door
+                for(int i = rm.StartX; i < rm.StartX + rm.SizeX; i++)
+                {
+                    for(int j = rm.StartY; j < rm.StartY + rm.SizeY; j++)
+                    {
+                        //if the current cell we are looking at is a corner cell, move on
+                        if (i == rm.StartX && j == rm.StartY || i == rm.StartX + rm.SizeX && j == rm.StartY + rm.SizeY || i == rm.StartX && j == rm.StartY + rm.SizeY || i == rm.StartX + rm.SizeX && j == rm.StartY)
+                            continue;
+                        //The below if statement is only looking for cells in the room that are touching a wall (excluding the corner cells)
+                        //I'm SURE there is a better way to do this...
+                        if(((i > rm.StartX && i < rm.StartX + rm.SizeX) && (j == rm.StartY || j == rm.StartY + rm.SizeY)) || ((j > rm.StartY && j < rm.StartY + rm.SizeY) && (i == rm.StartX || i == rm.StartX + sizeX)))
+                        {
+                            Tuple<int, int> tuple = new Tuple<int, int>(i, j);
+                            potentialDoorCell.Add(tuple);
+                        }
+                    }
+                }
+
+                //now randomly choose a tuple from the potentialDoorCell list
+                int randomListIndex = rand.Next(potentialDoorCell.Count());
+                cells[potentialDoorCell[randomListIndex].Item1, potentialDoorCell[randomListIndex].Item2].IsDoorCell = true;
+
+                //determine what wall the DoorCell is located, and open that wall in the coridor
+                if(potentialDoorCell[randomListIndex].Item2 == rm.StartY)
+                {
+                    //north wall
+                    cells[potentialDoorCell[randomListIndex].Item1, (potentialDoorCell[randomListIndex].Item2) - 1].Walls[2] = 0;
+                }
+                else if(potentialDoorCell[randomListIndex].Item2 == rm.StartY + rm.SizeY)
+                {
+                    //south wall
+                    cells[potentialDoorCell[randomListIndex].Item1, (potentialDoorCell[randomListIndex].Item2) + 1].Walls[0] = 0;
+                }
+                else if(potentialDoorCell[randomListIndex].Item1 == rm.StartX)
+                {
+                    //west wall
+                    cells[(potentialDoorCell[randomListIndex].Item1) - 1, potentialDoorCell[randomListIndex].Item2].Walls[1] = 0;
+                }
+                else
+                {
+                    //east wall
+                    cells[(potentialDoorCell[randomListIndex].Item1) + 1, potentialDoorCell[randomListIndex].Item2].Walls[3] = 0;
+                }
+            }
+        }
+
+        private void removeDeadEnds()
+        {
+            bool done = false;
+            int deadCount;
+            while (!done)
+            {
+                deadCount = 0;
+                for(int i = 0; i < sizeX; i++)
+                {
+                    for(int j = 0; j < sizeY; j++)
+                    {
+                        int sum = 0;
+                        for(int k = 0; k < 4; k++)
+                        {
+                            sum += cells[i, j].Walls[k];
+                        }
+                        if(sum == 3)
+                        {
+                            //close walls, so there are more dead ends to look for
+                            deadCount++;
+                            if(cells[i,j].Walls[0] == 1 && cells[i,j].Walls[1] == 1 && cells[i,j].Walls[3] == 1 && cells[i,j].Walls[2] == 0)
+                            {
+                                //north wall
+                                cells[i, j + 1].Walls[0] = 1;
+                            }
+                            else if(cells[i,j].Walls[0] == 1 && cells[i,j].Walls[1] == 1 && cells[i,j].Walls[2] == 1 && cells[i,j].Walls[3] == 0)
+                            {
+                                //east wall
+                                cells[i - 1, j].Walls[1] = 1;
+                            }
+                            else if(cells[i,j].Walls[1] == 1 && cells[i,j].Walls[2] == 1 && cells[i,j].Walls[3] == 1 && cells[i,j].Walls[0] == 0)
+                            {
+                                //south wall
+                                cells[i, j - 1].Walls[2] = 1;
+                            }
+                            else if(cells[i,j].Walls[0] == 1 && cells[i,j].Walls[2] == 1 && cells[i,j].Walls[3] == 1 && cells[i,j].Walls[1] == 0)
+                            {
+                                //west wall
+                                cells[i + 1, j].Walls[3] = 1;
+                            }
+
+                            cells[i, j].IsNonCell = true;
+                            for(int q = 0; q < 4; q++)
+                            {
+                                cells[i, j].Walls[q] = 1;
+                            }
+                        }
+                    }
+                }
+                if (deadCount == 0)
+                    done = true;
             }
         }
     }

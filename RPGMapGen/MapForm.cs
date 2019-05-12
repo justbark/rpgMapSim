@@ -14,7 +14,7 @@ namespace RPGMapGen
     {
         private int offsetX = 10;
         private int offsetY = 10;
-        int cellSize = 10;
+        int cellSize = 15;
 
         private Stage lvl;
 
@@ -27,8 +27,10 @@ namespace RPGMapGen
         private void panel2_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            Pen pen = new Pen(Color.Black);             //paint exterior of object
-            SolidBrush brush = new SolidBrush(Color.Red);    //paint interior of object
+            Pen pen = new Pen(Color.Black, 2);             //paint exterior of object
+            SolidBrush brush = new SolidBrush(Color.FromArgb(158, 255, 0, 0));    //paint interior of object
+            SolidBrush gBrush = new SolidBrush(Color.Green);
+            SolidBrush bBrush = new SolidBrush(Color.Black);
 
             
             int x;
@@ -44,30 +46,45 @@ namespace RPGMapGen
                     //{
                     //    g.FillRectangle(brush, x, y, x + cellSize, y + cellSize);
                     //}
+                    //(lvl.Cells[i, j].Walls[0] == 1 && lvl.Cells[i, j].Walls[1] == 1 && lvl.Cells[i, j].Walls[2] == 1 && lvl.Cells[i, j].Walls[3] == 1)
+                    //if (!lvl.Cells[i,j].RoomCell)
+                    //{
                     if (lvl.Cells[i, j].Walls[0] == 1)
                     {
                         g.DrawLine(pen, x, y, x + cellSize, y);
                     }
-                    if(lvl.Cells[i, j].Walls[1] == 1)
+                    if (lvl.Cells[i, j].Walls[1] == 1)
                     {
                         g.DrawLine(pen, x + cellSize, y, x + cellSize, y + cellSize);
                     }
-                    if(lvl.Cells[i, j].Walls[2] == 1)
+                    if (lvl.Cells[i, j].Walls[2] == 1)
                     {
                         g.DrawLine(pen, x, y + cellSize, x + cellSize, y + cellSize);
                     }
-                    if(lvl.Cells[i, j].Walls[3] == 1)
+                    if (lvl.Cells[i, j].Walls[3] == 1)
                     {
                         g.DrawLine(pen, x, y, x, y + cellSize);
                     }
+                    //if (lvl.Cells[i, j].IsDoorCell)
+                    //{
+                    //    Rectangle rect = new Rectangle(x, y, cellSize, cellSize);
+                    //    g.FillRectangle(gBrush, rect);
+                    //}
+                    if (lvl.Cells[i, j].IsNonCell)
+                    {
+                        Rectangle rect = new Rectangle(x, y, cellSize, cellSize);
+                        g.FillRectangle(bBrush, rect);
+                    }
+                    //}
+                    
                 }
             }
             //draw rooms
-            foreach (Room rm in lvl.Rooms)
-            {
-                Rectangle rect = new Rectangle((rm.StartX * cellSize) + offsetX, (rm.StartY * cellSize) + offsetY, rm.SizeX * cellSize, rm.SizeY * cellSize);
-                g.FillRectangle(brush, rect);
-            }
+            //foreach (Room rm in lvl.Rooms)
+            //{
+            //    Rectangle rect = new Rectangle((rm.StartX * cellSize) + offsetX, (rm.StartY * cellSize) + offsetY, rm.SizeX * cellSize, rm.SizeY * cellSize);
+            //    g.FillRectangle(brush, rect);
+            //}
         }
     }
 }

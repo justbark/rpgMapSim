@@ -16,6 +16,8 @@ namespace RPGMapGen
         private bool hasStairs;
         private int numStairs;
         private int roomNum;
+        private int doorX;
+        private int doorY;
 
         public Room(int sX, int sY, int randSizeX, int randSizeY)
         {
@@ -33,5 +35,7 @@ namespace RPGMapGen
         public int RoomNum { get => roomNum; set => roomNum = value; }
         public int StartX { get => startX; set => startX = value; }
         public int StartY { get => startY; set => startY = value; }
+        public int DoorX { get => doorX; set => doorX = value; }
+        public int DoorY { get => doorY; set => doorY = value; }
     }
 }

@@ -13,6 +13,8 @@ namespace RPGMapGen
         private int x;
         private int y;
         private bool roomCell;
+        private bool isNonCell;
+        private bool isDoorCell;
 
         public bool checkWalls()
         {
@@ -32,5 +34,7 @@ namespace RPGMapGen
         public byte[] Walls { get => walls; set => walls = value; }
         public byte[] Borders { get => borders; set => borders = value; }
         public bool RoomCell { get => roomCell; set => roomCell = value; }
+        public bool IsNonCell { get => isNonCell; set => isNonCell = value; }
+        public bool IsDoorCell { get => isDoorCell; set => isDoorCell = value; }
     }
 }
